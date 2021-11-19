@@ -1,7 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-const winesMock = [
+let winesMock = [
     {
         name: 'Pinot noir',
         price: 9.99,
@@ -29,7 +29,27 @@ const winesMock = [
     },
 ];
 
-class FilterableProductTable extends React.Component {
+const API_URL = 'https://cruth.phpnet.org/epfc/caviste/public/index.php/api/wines';
+
+class FilterableProductTable extends React.Component { 
+    constructor(props) {
+        super(props);
+        
+        this.state = {
+            wines: winesMock
+        }
+    }
+
+    componentDidMount() {
+        fetch(API_URL)
+	        .then(response => response.json())
+	        .then(json => {
+                console.log(json);
+                this.setState({wines:json});
+                this.render();
+            })
+    }
+
     render() {
         return <div>
             <div>
@@ -45,14 +65,16 @@ class FilterableProductTable extends React.Component {
                     <thead>
                         <tr><th>Name</th><th>Price</th></tr>
                     </thead>
-                    <tbody>
+                    <tbody>{/* TODO Transform into a componant */}
                         <tr><td colSpan="2" className="country">France</td></tr>
-                        <tr><td>BLOCK NINE</td><td>21.00</td></tr>
-                        <tr><td>BLOCK NINE</td><td>21.00</td></tr>
-                        <tr><td>BLOCK NINE</td><td>21.00</td></tr>
+                        { winesMock.filter(wine => wine.country==='France').map(wine => 
+                            <tr><td>{wine.name}</td><td>{wine.price}</td></tr>
+                         ) }
+
                         <tr><td colSpan="2" className="country">Italy</td></tr>
-                        <tr><td>BLOCK NINE</td><td>21.00</td></tr>
-                        <tr><td>BLOCK NINE</td><td>21.00</td></tr>
+                        { winesMock.filter(wine => wine.country==='Italy').map(wine => 
+                            <tr><td>{wine.name}</td><td>{wine.price}</td></tr>
+                         ) }
                     </tbody>
                 </table>
             </div>
